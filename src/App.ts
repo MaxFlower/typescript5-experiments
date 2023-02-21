@@ -24,12 +24,22 @@ function logger(fn: any, context: ClassMethodDecoratorContext) {
     return result;
 }
 
+// decorator with argument
+function addPrefix(prefix: string) {
+    return function actualDecorator(originalMethod: any, _: ClassMethodDecoratorContext) {
+        return function replacementMethod(this: any, ...args: any[]) {
+            return `${prefix} posted message:  ${originalMethod.call(this, ...args)}`;
+        }
+    }
+}
+
 class Pet {
     private readonly _name: string
     constructor(name: string) {
         this._name = name;
     }
 
+    @addPrefix('Cat')
     @logger        // order #2
     @errorHandler  // order #1
     sayHi() {
